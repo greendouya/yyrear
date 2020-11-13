@@ -10,11 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# 修改导包路径
+# print(sys.path)
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+# print(sys.path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -37,7 +42,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',   # 用户模块
+    'contents', # 首页广告模块
 ]
+
+# 指定自定义的用户模型类,值的语法: '子应用.用户模型类'
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -50,8 +60,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'yyrear_mall.urls'
-
-print(os.path.join(BASE_DIR, 'templates'))
 
 TEMPLATES = [
     {
@@ -182,13 +190,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -201,3 +208,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+# 自定义静态文件路径
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
