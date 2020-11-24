@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',   # 用户模块
     'contents', # 首页广告模块
+    'verifications', # 验证码模块
 ]
 
 # 指定自定义的用户模型类,值的语法: '子应用.用户模型类'
@@ -122,6 +123,13 @@ CACHES = {
     "session": { # session
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://:t7sk9q2b@127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "verify_code": { # verify_code
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:t7sk9q2b@127.0.0.1:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }

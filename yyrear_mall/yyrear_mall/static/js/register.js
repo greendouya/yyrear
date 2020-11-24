@@ -1,3 +1,4 @@
+
 let vm = new Vue({
     el: '#app', // 通过id选择器找到绑定的html内容
     // 修改Vue读取变量的语法
@@ -9,6 +10,8 @@ let vm = new Vue({
         password2: '',
         mobile: '',
         allow: '',
+        image_code_url: '',
+        uuid: '',
 
         // v-show
         error_name: false,
@@ -16,12 +19,23 @@ let vm = new Vue({
         error_password2: false,
         error_mobile: false,
         error_allow: false,
+        error_image_code: false,
 
         // error_message
         error_name_message: '',
-        error_mobile_message: ''
+        error_mobile_message: '',
+        error_image_code_message: '',
+    },
+    mounted() {
+        // 生成图形验证码
+        this.generate_image_code()
     },
     methods: {   // 定义和实现事件方法
+        // 生成图形验证码的方法, 封装思想, 代码复用
+        generate_image_code(){
+            this.uuid = generateUUID()
+            this.image_code_url = '/image_codes/' + this.uuid + '/'
+        },
         // 校验用户名
         check_username() {
             let re = /^[a-zA-Z0-9_-]{5,20}$/
@@ -78,10 +92,38 @@ let vm = new Vue({
                 this.error_mobile_message = '您输入的手机号格式不正确';
                 this.error_mobile = true;
             }
+
+            // 判断手机号是否重复
+            if (this.error_mobile == false) { // 只有用户输入手机号满足条件才判断
+                let url = '/mobiles/' + this.mobile + '/count/'
+                axios.get(url, {
+                    responseType: 'json'
+                }).then(response => {
+                    if (response.data.count == 1){
+                        // 手机号已存在
+                        this.error_mobile_message = '手机号已存在'
+                        this.error_mobile = true
+                    } else {
+                        // 手机号不存在
+                        this.error_mobile = false
+                    }
+                }).catch(error => {
+                    console.log(error.response)
+                })
+            }
+        },
+        // 检验图片验证码
+        check_image_code() {
+            if (!this.image_code) {
+                this.error_image_code_message = '请填写图片验证码'
+                this.error_image_code = true
+            } else {
+                this.error_image_code = false
+            }
         },
         // 校验是否候选协议
         check_allow() {
-            if(!this.allow) {
+            if (!this.allow) {
                 this.error_allow = true;
             } else {
                 this.error_allow = false;
@@ -94,9 +136,10 @@ let vm = new Vue({
             this.check_password2();
             this.check_mobile();
             this.check_allow();
+            this.check_image_code();
 
             if(this.error_name == true || this.error_password == true || this.error_password2 == true
-            || this.error_mobile == true || this.error_allow == true) {
+            || this.error_mobile == true || this.error_allow == true || this.error_image_code == true ){
                 // 禁用表单的提交
                 Event.returnValue = false;
             }

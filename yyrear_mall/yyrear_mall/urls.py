@@ -18,6 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('users.urls', namespace="users")), # 使用命名空间
-    path('', include('contents.urls', namespace="contents")),
+    path('', include('users.urls', namespace="users")), # 使用命名空间定义用户路由
+    path('', include('contents.urls', namespace="contents")), # 首页广告路由
+    path('', include('verifications.urls')), # 验证码路由
 ]
